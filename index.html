@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+</head>
+
+<body>
+  <div id="root">
+    <main>
+      <section>
+        <h1>Home</h1>
+        <a href="./about.html">Go to About</a>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    const root = document.getElementById("root");
+    // console.log(window.location);
+
+    const achors = document.getElementsByTagName("a");
+    // console.log(achors);
+
+    for (let i = 0; i < achors.length; i++) {
+      const achor = achors[i];
+      achor.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (!(achor instanceof HTMLAnchorElement)) {
+          return;
+        }
+        console.log(achor.href);
+        // console.log(achor.getAttribute("href"));
+        fetch(achor.href)
+          .then((res) => res.text())
+          .then(html => {
+            root.replaceChildren();
+            root.innerHTML = html;
+            // console.log(html);
+            // console.log(history);
+            // console.log(achors);
+
+          })
+          .then(() => {
+            achors.length = 0
+            achors.push(...document.getElementsByTagName("a"))
+          })
+          .catch(() => {
+            return;
+          })
+      })
+    }
+  </script>
+</body>
+
+</html>
