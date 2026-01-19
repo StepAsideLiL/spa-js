@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
+  <title>Home - SPA</title>
 </head>
 
 <body>
@@ -12,17 +12,18 @@
     <main>
       <section>
         <h1>Home</h1>
-        <a href="./about.html">Go to About</a>
+        <a href="/about">Go to About</a>
       </section>
     </main>
   </div>
 
   <script type="module">
-    const root = document.getElementById("root");
-    // console.log(window.location);
+    const parser = new DOMParser();
 
+    const root = document.getElementById("root");
+    const head = document.getElementsByTagName("head")[0]
+    const body = document.body.querySelector("body")
     const achors = document.getElementsByTagName("a");
-    // console.log(achors);
 
     for (let i = 0; i < achors.length; i++) {
       const achor = achors[i];
@@ -31,21 +32,27 @@
         if (!(achor instanceof HTMLAnchorElement)) {
           return;
         }
-        console.log(achor.href);
+        // console.log(achor.href);
         // console.log(achor.getAttribute("href"));
         fetch(achor.href)
           .then((res) => res.text())
           .then(html => {
-            root.replaceChildren();
-            root.innerHTML = html;
+            const parsedDoc = parser.parseFromString(html, "text/html")
+            head.replaceChildren();
+            head.innerHTML = parsedDoc.querySelector("head").innerHTML
+            body.replaceChildren()
+            body.innerHTML = parsedDoc.body.querySelector("body").innerHTML
+
+            // root.replaceChildren();
+            // root.innerHTML = html;
             // console.log(html);
             // console.log(history);
             // console.log(achors);
 
           })
           .then(() => {
-            achors.length = 0
-            achors.push(...document.getElementsByTagName("a"))
+            // achors.length = 0
+            // achors.push(...document.getElementsByTagName("a"))
           })
           .catch(() => {
             return;
