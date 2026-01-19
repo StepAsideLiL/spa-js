@@ -20,45 +20,82 @@
   <script type="module">
     const parser = new DOMParser();
 
-    const root = document.getElementById("root");
-    const head = document.getElementsByTagName("head")[0]
-    const body = document.body.querySelector("body")
-    const achors = document.getElementsByTagName("a");
+    // const root = document.getElementById("root");
+    // const head = document.getElementsByTagName("head")[0]
+    // const body = document.querySelector("body")
+    // const bodyChildren = document.body.querySelectorAll("body > :not(script)")
 
-    for (let i = 0; i < achors.length; i++) {
-      const achor = achors[i];
-      achor.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (!(achor instanceof HTMLAnchorElement)) {
-          return;
-        }
-        // console.log(achor.href);
-        // console.log(achor.getAttribute("href"));
-        fetch(achor.href)
-          .then((res) => res.text())
-          .then(html => {
-            const parsedDoc = parser.parseFromString(html, "text/html")
-            head.replaceChildren();
-            head.innerHTML = parsedDoc.querySelector("head").innerHTML
-            body.replaceChildren()
-            body.innerHTML = parsedDoc.body.querySelector("body").innerHTML
+    const observer = new MutationObserver(() => {
+      console.log(document.querySelectorAll("a"));
+      console.log(document.querySelectorAll("a")[0].innerText);
+      getAnchor(document.querySelectorAll("a"))
+    });
 
-            // root.replaceChildren();
-            // root.innerHTML = html;
-            // console.log(html);
-            // console.log(history);
-            // console.log(achors);
+    observer.observe(document.body, {
+      childList: true,
+    });
 
-          })
-          .then(() => {
-            // achors.length = 0
-            // achors.push(...document.getElementsByTagName("a"))
-          })
-          .catch(() => {
+    function getAnchor(anchors) {
+      const root = document.getElementById("root");
+      const head = document.getElementsByTagName("head")[0]
+      const body = document.querySelector("body")
+      const bodyChildren = document.body.querySelectorAll("body > :not(script)")
+
+      for (let i = 0; i < anchors.length; i++) {
+        const anchor = anchors[i];
+        anchor.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (!(anchor instanceof HTMLAnchorElement)) {
             return;
-          })
-      })
+          }
+          // console.log(anchor.href);
+          // console.log(anchor.getAttribute("href"));
+          fetch(anchor.href)
+            .then((res) => res.text())
+            .then(html => {
+              const parsedDoc = parser.parseFromString(html, "text/html")
+              head.replaceChildren();
+              head.innerHTML = parsedDoc.querySelector("head").innerHTML
+
+              bodyChildren.forEach(el => el.remove());
+              parsedDoc.body.querySelectorAll("body > :not(script)").forEach(el => body.insertAdjacentHTML("beforeend", el.innerHTML))
+            })
+            .catch(() => {
+              return;
+            })
+        })
+      }
     }
+
+    // for (let i = 0; i < achors.length; i++) {
+    //   const achor = achors[i];
+    //   achor.addEventListener("click", (e) => {
+    //     e.preventDefault();
+    //     if (!(achor instanceof HTMLAnchorElement)) {
+    //       return;
+    //     }
+    //     // console.log(achor.href);
+    //     // console.log(achor.getAttribute("href"));
+    //     fetch(achor.href)
+    //       .then((res) => res.text())
+    //       .then(html => {
+    //         const parsedDoc = parser.parseFromString(html, "text/html")
+    //         head.replaceChildren();
+    //         head.innerHTML = parsedDoc.querySelector("head").innerHTML
+
+    //         bodyChildren.forEach(el => el.remove());
+    //         parsedDoc.body.querySelectorAll("body > :not(script)").forEach(el => body.insertAdjacentHTML("beforeend", el.innerHTML))
+
+    //         // console.log(achor.innerText);
+
+    //         // achors.length = 0;
+    //         // achors.push(...parsedDoc.getElementsByTagName("a"));
+    //       })
+    //       .catch(() => {
+    //         return;
+    //       })
+    //   })
+    // }
   </script>
 </body>
 
