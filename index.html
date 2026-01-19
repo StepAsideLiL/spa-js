@@ -20,11 +20,6 @@
   <script type="module">
     const parser = new DOMParser();
 
-    // const root = document.getElementById("root");
-    // const head = document.getElementsByTagName("head")[0]
-    // const body = document.querySelector("body")
-    // const bodyChildren = document.body.querySelectorAll("body > :not(script)")
-
     const observer = new MutationObserver(() => {
       console.log(document.querySelectorAll("a"));
       console.log(document.querySelectorAll("a")[0].innerText);
@@ -36,7 +31,6 @@
     });
 
     function getAnchor(anchors) {
-      const root = document.getElementById("root");
       const head = document.getElementsByTagName("head")[0]
       const body = document.querySelector("body")
       const bodyChildren = document.body.querySelectorAll("body > :not(script)")
@@ -48,8 +42,7 @@
           if (!(anchor instanceof HTMLAnchorElement)) {
             return;
           }
-          // console.log(anchor.href);
-          // console.log(anchor.getAttribute("href"));
+
           fetch(anchor.href)
             .then((res) => res.text())
             .then(html => {
@@ -58,44 +51,26 @@
               head.innerHTML = parsedDoc.querySelector("head").innerHTML
 
               bodyChildren.forEach(el => el.remove());
-              parsedDoc.body.querySelectorAll("body > :not(script)").forEach(el => body.insertAdjacentHTML("beforeend", el.innerHTML))
+              parsedDoc.body.querySelectorAll("body > :not(script)").forEach(el => body.insertAdjacentHTML("beforeend", el.innerHTML));
+
+              console.log(anchor.href);
+              console.log(parsedDoc.title);
+              console.log(anchor.getAttribute("href"));
+
+              // TODOs:
+              // 1. implement site privious page fetch.
+              history.pushState(
+                { page: parsedDoc.title },
+                '',
+                anchor.getAttribute("href")
+              );
             })
             .catch(() => {
               return;
-            })
-        })
+            });
+        });
       }
     }
-
-    // for (let i = 0; i < achors.length; i++) {
-    //   const achor = achors[i];
-    //   achor.addEventListener("click", (e) => {
-    //     e.preventDefault();
-    //     if (!(achor instanceof HTMLAnchorElement)) {
-    //       return;
-    //     }
-    //     // console.log(achor.href);
-    //     // console.log(achor.getAttribute("href"));
-    //     fetch(achor.href)
-    //       .then((res) => res.text())
-    //       .then(html => {
-    //         const parsedDoc = parser.parseFromString(html, "text/html")
-    //         head.replaceChildren();
-    //         head.innerHTML = parsedDoc.querySelector("head").innerHTML
-
-    //         bodyChildren.forEach(el => el.remove());
-    //         parsedDoc.body.querySelectorAll("body > :not(script)").forEach(el => body.insertAdjacentHTML("beforeend", el.innerHTML))
-
-    //         // console.log(achor.innerText);
-
-    //         // achors.length = 0;
-    //         // achors.push(...parsedDoc.getElementsByTagName("a"));
-    //       })
-    //       .catch(() => {
-    //         return;
-    //       })
-    //   })
-    // }
   </script>
 </body>
 
